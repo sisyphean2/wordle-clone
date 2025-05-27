@@ -1,14 +1,19 @@
 export default function getGuessColors(answer: string[], guess: string[], isSubmitted: boolean): string[] {
   const letterTracker = [...answer];
 
+  console.log(guess)
   const colors: string[] = answer.map((letter, index) => {
-    let color = "bg-gray-300 text-white";
+    let color = "bg-missing text-white";
     if (!isSubmitted) {
-      return "bg-white border border-2 border-gray-600 text-black";
+      guess[index]
+      if (guess[index]) {
+        return "bg-white bg-no-guess border border-2 border-missing text-black";
+      } 
+      return "bg-white bg-no-guess border border-2 border-no-guess text-black";
     } else if (isSubmitted && guess[index] === letter) {
       const index = letterTracker.indexOf(letter);
       letterTracker.splice(index, 1);
-      return "bg-green-500 text-white";
+      return "bg-correct text-white";
     }
 
     return color;
@@ -17,7 +22,7 @@ export default function getGuessColors(answer: string[], guess: string[], isSubm
   // The case where a letter is guessed twice but only occurs once is awkward to handle cleanly.
   colors.forEach((color, colorIndex) => {
     if (letterTracker.includes(guess[colorIndex]) && isSubmitted) {
-      colors[colorIndex] = "bg-amber-400 text-white";
+      colors[colorIndex] = "bg-included text-white";
       const index = letterTracker.indexOf(guess[colorIndex]);
       letterTracker.splice(index, 1);
     }

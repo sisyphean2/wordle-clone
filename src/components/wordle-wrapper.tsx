@@ -34,6 +34,9 @@ export default function WordleWrapper() {
   });
 
   const handleLetter = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (status === "incomplete") {
+      setStatus("guessing");
+    }
     const target = event.target as HTMLButtonElement;
     setGuesses((prevState) => {
       const freshGuesses = [...prevState];
@@ -45,7 +48,7 @@ export default function WordleWrapper() {
   };
 
   const handleBack = () => {
-    if (status === "invalid") {
+    if (status === "invalid" || status === "incomplete") {
       setStatus("guessing");
     }
     setGuesses((prevState) => {
@@ -58,8 +61,9 @@ export default function WordleWrapper() {
   };
 
   const handleSubmit = () => {
-    if (guesses[numberGuesses].length < 5) return;
-    if (VALID_WORDS.includes(guesses[numberGuesses].toLowerCase())) {
+    if (guesses[numberGuesses].length < 5) {
+      setStatus("incomplete");
+    } else if (VALID_WORDS.includes(guesses[numberGuesses].toLowerCase())) {
       setNumberGuesses(numberGuesses + 1);
       if (answer === guesses[numberGuesses]) {
         setStatus("won");
@@ -73,7 +77,7 @@ export default function WordleWrapper() {
 
   return (
     <div className="flex flex-col items-center">
-      <div>Wordle</div>
+      <h2 className="font-bold text-xl">Wordle Clone</h2>
       {guesses.map((singleGuess, outerIndex) => {
         return (
           <Guess
@@ -84,39 +88,61 @@ export default function WordleWrapper() {
           />
         );
       })}
-      {status === "invalid" ? <div>Submission not in word list.</div> : null}
-      {status === "loss" ? <div>I'm sorry, you're out of guesses.</div> : null}
-      {status === "won" ? <div>Congratulations! You got it!</div> : null}
-      <LetterRow
-        correctLetters={correctLetters}
-        includedLetters={includedLetters}
-        row={ROW_ONE}
-        usedLetters={usedLetters}
-        handleLetter={handleLetter}
-      />
-      <LetterRow
-        correctLetters={correctLetters}
-        includedLetters={includedLetters}
-        row={ROW_TWO}
-        usedLetters={usedLetters}
-        handleLetter={handleLetter}
-      />
-      <LetterRow
-        correctLetters={correctLetters}
-        includedLetters={includedLetters}
-        row={ROW_THREE}
-        usedLetters={usedLetters}
-        handleLetter={handleLetter}
-      />
+      {status === "incomplete" ? (
+        <div className="p-2 mt-1 rounded-lg bg-rose-500 text-gray-100">
+          A guess requires five letters.
+        </div>
+      ) : null}
+      {status === "invalid" ? (
+        <div className="p-2 mt-1 rounded-lg bg-rose-500 text-gray-100">
+          Submission not in word list.
+        </div>
+      ) : null}
+      {status === "loss" ? (
+        <div className="p-2 mt-1 rounded-lg bg-rose-500 text-gray-100">
+          I'm sorry, you're out of guesses.
+        </div>
+      ) : null}
+      {status === "won" ? (
+        <div className="p-2 mt-1 rounded-lg bg-correct text-gray-100">
+          Congratulations! You got it!
+        </div>
+      ) : null}
+      {status === "guessing" ? <div className="h-10 mt-1"></div> : null}
+      <div className="m-2">
+        <LetterRow
+          correctLetters={correctLetters}
+          includedLetters={includedLetters}
+          row={ROW_ONE}
+          usedLetters={usedLetters}
+          handleLetter={handleLetter}
+        />
+      </div>
+      <div className="m-2">
+        <LetterRow
+          correctLetters={correctLetters}
+          includedLetters={includedLetters}
+          row={ROW_TWO}
+          usedLetters={usedLetters}
+          handleLetter={handleLetter}
+        />
+      </div>
       <div className="m-2">
         <button
-          className="bg-gray-300 p-2 w-20 h-12 rounded-sm m-1 font-bold inline"
+          className="bg-no-guess p-2 w-20 h-12 rounded-sm m-1 font-bold inline"
           onClick={handleSubmit}
         >
           Enter
         </button>
+        <LetterRow
+          correctLetters={correctLetters}
+          includedLetters={includedLetters}
+          row={ROW_THREE}
+          usedLetters={usedLetters}
+          handleLetter={handleLetter}
+        />
         <button
-          className="bg-gray-300 p-2 w-20 h-12 rounded-sm m-1 font-bold inline"
+          className="bg-no-guess p-2 w-20 h-12 rounded-sm m-1 font-bold inline"
           onClick={handleBack}
         >
           Back

@@ -17,15 +17,15 @@ export default function LetterRow({
   handleLetter,
 }: LetterRowProps) {
   return (
-    <div className="m-2">
+    <>
       {row.map((letter) => {
-        let color = "bg-gray-300";
+        let color = "bg-no-guess";
         if (correctLetters.includes(letter)) {
-          color = "bg-green-500 text-white";
+          color = "bg-correct text-white";
         } else if (includedLetters.includes(letter)) {
-          color = "bg-amber-400 text-white";
+          color = "bg-included text-white";
         } else if (usedLetters.includes(letter)) {
-          color = "bg-gray-600 text-white";
+          color = "bg-missing text-white";
         }
 
         return (
@@ -42,6 +42,6 @@ export default function LetterRow({
           </button>
         );
       })}
-    </div>
+    </>
   );
 }
